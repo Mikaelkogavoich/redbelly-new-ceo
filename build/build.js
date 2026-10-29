@@ -399,7 +399,7 @@ function buildSourcesDocx() {
         cell([P([T(s.title, { bold: true })]), P([T(`${s.publisher}${s.date !== 'n/a' ? ` · ${s.date}` : ''}`, { color: C.muted })])], wA[1]),
         cell([P([T(s.tier)])], wA[2]),
         cell([P([new ExternalHyperlink({ link: s.url, children: [T(s.url, { color: C.cite, underline: {}, size: sz - 1 })] })])], wA[3]),
-        cell([P([T(s.note || '—', { color: C.muted })])], wA[4]),
+        cell([P([T(s.note || 'None', { color: C.muted })])], wA[4]),
       ],
     })),
   ]));
@@ -522,7 +522,7 @@ function buildSourcesMd() {
   L.push('## A. Sources', '', '| ID | Source | Type | Link | Access notes |', '|---|---|---|---|---|');
   for (const [id, s] of Object.entries(SOURCES)) {
     const meta = `${s.publisher}${s.date !== 'n/a' ? `, ${s.date}` : ''}`;
-    L.push(`| ${id} | **${cellText(s.title)}**<br>${cellText(meta)} | ${s.tier} | <${s.url}> | ${cellText(s.note || '—')} |`);
+    L.push(`| ${id} | **${cellText(s.title)}**<br>${cellText(meta)} | ${s.tier} | <${s.url}> | ${cellText(s.note || 'None')} |`);
   }
   L.push('', '## B. Claim map: briefing', '');
   for (const group of claimsBySection()) {

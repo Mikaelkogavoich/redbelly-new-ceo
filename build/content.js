@@ -180,7 +180,7 @@ const CLAIMS = {
   'appointment': {
     text: 'Redbelly announced on 16 September 2026 that Christian Westerlind Wigstrom will become CEO, starting November 2026.',
     ev: {
-      S1: 'SYDNEY, Australia — 16 September 2026 — Today, Redbelly Network announced the appointment of Christian Westerlind Wigstrom as Chief Executive Officer to start November 2026.',
+      S1: '16 September 2026 … Today, Redbelly Network announced the appointment of Christian Westerlind Wigstrom as Chief Executive Officer to start November 2026.',
       S2: 'Christian Westerlind Wigstrom as Chief Executive Officer to start November 2026 (release dated 16 September 2026)',
       S3: 'Australian blockchain firm, Redbelly Network, has appointed payments industry veteran, Christian Westerlind Wigstrom, as its new Chief Executive Officer, with the role to commence in November 2026. (published September 16, 2026)',
     },
@@ -300,7 +300,7 @@ const CLAIMS = {
   'automatcher': {
     text: 'Monoova’s Automatcher issues unique, repeat-use PayIDs so incoming payments can be reconciled without manual references.',
     ev: {
-      S13: 'Monoova has developed ‘Automatcher’ – a solution which issues large numbers of unique, repeat-use PayIDs … It removes lengthy and error-prone manual references previously required for reconciliation',
+      S13: 'Monoova has developed ‘Automatcher’ … a solution which issues large numbers of unique, repeat-use PayIDs … It removes lengthy and error-prone manual references previously required for reconciliation',
     },
   },
   'boards': {
@@ -338,7 +338,7 @@ const CLAIMS = {
     },
   },
   'oxford-dates': {
-    text: 'His public profile lists Oxford University for 2008–2012.',
+    text: 'His public profile lists Oxford University for 2008 to 2012.',
     ev: {
       S5: 'Education: Oxford University, 2008 - 2012',
     },
@@ -553,7 +553,7 @@ const BRIEFING = {
         ] },
         { h2: 'Before Monoova' },
         { bullets: [
-          'He holds a PhD from the University of Oxford [[phd:S14,S15,S17]]; his profile lists Oxford University for 2008–2012 [[oxford-dates:S5]]. As a doctoral student he worked with Robert Skidelsky “at the intersection of economic policy and theory” and co-edited _The Economic Crisis and the State of Economics_ (Palgrave Macmillan) [[inet:S16]].',
+          'He holds a PhD from the University of Oxford [[phd:S14,S15,S17]]; his profile lists Oxford University for 2008 to 2012 [[oxford-dates:S5]]. As a doctoral student he worked with Robert Skidelsky “at the intersection of economic policy and theory” and co-edited _The Economic Crisis and the State of Economics_ (Palgrave Macmillan) [[inet:S16]].',
           'While completing the PhD he worked as an economic advisor and speechwriter in the UK Parliament, in the House of Lords [[parliament:S14,S15]].',
           'He then spent three years as Chief of Staff and Markets at a large agricultural startup in Zimbabwe [[zimbabwe:S14]], described elsewhere as an agriculture and renewable-energy company [[zim-energy:S15]] based in Harare [[zim-harare:S17]]. He has also consulted for firms in Iraq, Sweden, the US and the UK [[consulting:S15]].',
         ] },
