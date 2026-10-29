@@ -514,6 +514,7 @@ const BRIEFING = {
   kicker: 'Redbelly DAO · New CEO briefing',
   title: 'Christian Westerlind Wigstrom, Redbelly’s incoming CEO',
   subtitle: 'Who he is, what Redbelly announced, and what his payments track record could mean for Tokeniser',
+  date: '29 October 2026',
   meta: `29 October 2026 · Sources accessed ${ACCESSED}`,
   howto: 'How to read this briefing: every factual statement carries a bracketed source link. Boxes marked ANALYSIS contain interpretation, not established fact. A claim-by-claim source list accompanies this document.',
   sections: [

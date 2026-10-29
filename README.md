@@ -14,7 +14,7 @@ A fully sourced briefing on Redbelly Network’s incoming Chief Executive Office
 | 2 | X thread | 8 posts, 215 to 276 characters each | [`x-thread.md`](02-x-thread/x-thread.md) | [Plain text for posting](02-x-thread/x-thread.txt) |
 | 3 | Source list | 18 sources, 53 claims with verbatim excerpts | [`source-list.md`](03-source-list/source-list.md) | [PDF](03-source-list/source-list.pdf) · [Word](03-source-list/source-list.docx) |
 
-The Word files open directly in Google Docs (File > Open > Upload) if the DAO prefers a shared document.
+The PDF and Word files follow the [Redbelly DAO Task Board brand kit](https://taskboard.redbellydao.network/brand): Be Vietnam Pro for all text, JetBrains Mono for IDs and dates, one red accent, and the DAO logo on a dark steel band. The Word files open directly in Google Docs (File > Open > Upload) if the DAO prefers a shared document.
 
 ## Briefing structure
 
@@ -41,7 +41,7 @@ The Word files open directly in Google Docs (File > Open > Upload) if the DAO pr
 
 | Benchmark | How it is met |
 |---|---|
-| Every factual claim has a working source link | 17 of 18 sources respond with HTTP 200 to an automated check. LinkedIn refuses scripted requests (HTTP 999) but opens normally in a browser. |
+| Every factual claim has a working source link | All 18 source links work. 17 pass an automated check (HTTP 200). LinkedIn blocks all automated requests (HTTP 999), so it was checked by hand in a browser on 29 October 2026. |
 | Facts and analysis are clearly separated | Interpretation appears only in boxes marked ANALYSIS. In section 4, each point gives its facts first under “Basis (facts)”. |
 | Readable by someone new to him or to payments | Plain language throughout, and a key terms table explains NPP, PayID, PayTo, API, reconciliation, tokenisation and T+2 / T+0. |
 | Neutral, professional tone | Company figures are attributed (“According to Redbelly”, “The site reports”), and section 4.5 sets out the limits of the analysis and the open questions. |
@@ -105,7 +105,7 @@ Full notes are in section D of the [source list](03-source-list/source-list.md).
 
 Every sentence, source, claim and excerpt lives in one file, [`build/content.js`](build/content.js). The build stops if any citation in the text does not match the sources recorded for that claim.
 
-Requirements: Node.js 18 or later, LibreOffice (`soffice`) and Python 3.
+Requirements: Node.js 18 or later, LibreOffice (`soffice`), Python 3, and the fonts Be Vietnam Pro and JetBrains Mono (both free on Google Fonts). The build stops with a message if either font is missing.
 
 ```bash
 cd build && npm install && cd ..
@@ -124,7 +124,7 @@ bash build/build.sh
 02-x-thread/       thread as formatted Markdown and plain text for posting
 03-source-list/    claim-by-claim source list as Markdown, PDF and Word
 verification/      verify.py and the latest report
-build/             content.js (single source), build.js, build.sh
+build/             content.js (single source), build.js, build.sh, assets/ (DAO logos from the brand kit)
 ```
 
 ---

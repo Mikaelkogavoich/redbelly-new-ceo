@@ -11,7 +11,7 @@ const {
   Document, Packer, Paragraph, TextRun, ExternalHyperlink, HeadingLevel, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle, LevelFormat, Header, Footer,
   PageNumber, PageOrientation, PositionalTab, PositionalTabAlignment, PositionalTabRelativeTo,
-  PositionalTabLeader, Tab, TabStopType,
+  PositionalTabLeader, Tab, TabStopType, ImageRun, VerticalAlign, LineRuleType,
 } = require('docx');
 const { ACCESSED, SOURCES, CLAIMS, BRIEFING, THREAD } = require('./content');
 
@@ -123,12 +123,21 @@ if (errors.length) {
 
 // ---------------------------------------------------------------- DOCX helpers
 
-const FONT = 'Calibri';
+// Redbelly DAO Task Board brand kit (taskboard.redbellydao.network/brand), light theme for print.
+// Be Vietnam Pro for all text; JetBrains Mono only for IDs, dates and counts. One accent: the brand red.
+const FONT = 'Be Vietnam Pro';
+const FONT_SEMIBOLD = 'Be Vietnam Pro SemiBold';
+const MONO = 'JetBrains Mono';
 const C = {
-  ink: '1F2328', muted: '5B6470', accent: '8E1B2C', cite: '8E1B2C',
-  bar: 'B7791F', fill: 'FBF5E6', label: '7A4E0E', rule: 'D5D9DE', termFill: 'F2F3F5', basisFill: 'F6F7F9',
+  ink: '0F1A22', muted: '394853', faint: '596975', accent: 'B3272A', cite: 'B3272A', brand: 'EF5350',
+  rule: 'D3DBE1', tile: 'EDF1F4', tileStrong: 'DDE6ED',
+  hero: '1D3140', heroInk: 'F1F5F8', heroMuted: 'C2CED6', heroAccent: 'FFB3AE',
 };
-const SIZE = { body: 21, small: 17, cite: 15, h1: 25, h2: 21, title: 38, subtitle: 23, kicker: 16 };
+const SIZE = { body: 18, small: 15, cite: 13, h1: 24, h2: 19, title: 40, subtitle: 20, kicker: 15 };
+const LOGO_ON_DARK = fs.readFileSync(path.join(__dirname, 'assets', 'dao-logo-on-dark.png'));
+const LOGO_RATIO = 1434 / 1024;
+
+const mono = (text, o = {}) => new TextRun({ text, font: MONO, ...o });
 
 function citeRuns(ids) {
   const r = [new TextRun({ text: '[', size: SIZE.cite, color: C.cite })];
@@ -160,8 +169,8 @@ const h2 = (text) => new Paragraph({ heading: HeadingLevel.HEADING_2, children: 
 const bullet = (text) => new Paragraph({ numbering: { reference: 'bullet', level: 0 }, spacing: { after: 70 }, children: runs(text) });
 
 const ANALYSIS_BOX = {
-  shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.fill },
-  border: { left: { style: BorderStyle.SINGLE, size: 18, color: C.bar, space: 8 } },
+  shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.tile },
+  border: { left: { style: BorderStyle.SINGLE, size: 24, color: C.brand, space: 8 } },
   indent: { left: 170, right: 113 },
 };
 
@@ -170,7 +179,7 @@ function analysisPara(text, label) {
     ...ANALYSIS_BOX,
     spacing: { before: 40, after: 120 },
     children: [
-      new TextRun({ text: label, bold: true, size: SIZE.cite + 1, color: C.label, characterSpacing: 10 }),
+      new TextRun({ text: label, bold: true, size: SIZE.cite + 1, color: C.accent, characterSpacing: 15 }),
       new TextRun({ text: '  ' }),
       ...runs(text),
     ],
@@ -185,6 +194,33 @@ function basisPara(text) {
 }
 
 const thin = { style: BorderStyle.SINGLE, size: 4, color: C.rule };
+const NONE = { style: BorderStyle.NONE, size: 0, color: 'auto' };
+
+function heroBand({ kicker, title, subtitle, meta }, width) {
+  const logoH = 84;
+  const logoCell = 2200;
+  const fill = { type: ShadingType.CLEAR, color: 'auto', fill: C.hero };
+  const borders = { top: NONE, bottom: NONE, left: NONE, right: NONE };
+  const lines = [
+    new Paragraph({ spacing: { after: 80 }, children: [new TextRun({ text: kicker.toUpperCase(), bold: true, size: SIZE.kicker, color: C.heroAccent, characterSpacing: 30 })] }),
+    new Paragraph({ spacing: { after: 60, line: 240, lineRule: LineRuleType.AUTO }, children: [new TextRun({ text: title, bold: true, size: SIZE.title, color: C.heroInk, characterSpacing: -8 })] }),
+  ];
+  if (subtitle) lines.push(new Paragraph({ spacing: { after: 80 }, children: [new TextRun({ text: subtitle, size: SIZE.subtitle, color: C.heroMuted })] }));
+  if (meta) lines.push(new Paragraph({ spacing: { after: 0 }, children: meta.map((m) => (m.mono ? mono(m.text, { size: SIZE.small, color: C.heroMuted }) : new TextRun({ text: m.text, size: SIZE.small, color: C.heroMuted }))) }));
+  return new Table({
+    width: { size: width, type: WidthType.DXA },
+    columnWidths: [width - logoCell, logoCell],
+    rows: [new TableRow({
+      children: [
+        new TableCell({ width: { size: width - logoCell, type: WidthType.DXA }, borders, shading: fill, verticalAlign: VerticalAlign.CENTER, margins: { top: 300, bottom: 300, left: 360, right: 120 }, children: lines }),
+        new TableCell({
+          width: { size: logoCell, type: WidthType.DXA }, borders, shading: fill, verticalAlign: VerticalAlign.CENTER, margins: { top: 240, bottom: 240, left: 120, right: 300 },
+          children: [new Paragraph({ alignment: AlignmentType.RIGHT, spacing: { after: 0, line: 240, lineRule: LineRuleType.AUTO }, children: [new ImageRun({ type: 'png', data: LOGO_ON_DARK, transformation: { width: Math.round(logoH * LOGO_RATIO), height: logoH }, altText: { title: 'Redbelly DAO', description: 'Redbelly DAO logo', name: 'Redbelly DAO logo' } })] })],
+        }),
+      ],
+    })],
+  });
+}
 const CELL_BORDERS = { top: thin, bottom: thin, left: thin, right: thin };
 
 function cell(children, width, opts = {}) {
@@ -211,26 +247,26 @@ function docStyles() {
     default: {
       document: {
         run: { font: FONT, size: SIZE.body, color: C.ink },
-        paragraph: { spacing: { after: 100, line: 259 } },
+        paragraph: { spacing: { after: 90, line: 259 } },
       },
     },
     paragraphStyles: [
       {
         id: 'Heading1', name: 'Heading 1', basedOn: 'Normal', next: 'Normal', quickFormat: true,
-        run: { font: FONT, size: SIZE.h1, bold: true, color: C.accent },
+        run: { font: FONT, size: SIZE.h1, bold: true, color: C.ink, characterSpacing: -4 },
         paragraph: {
-          spacing: { before: 220, after: 70 }, keepNext: true, outlineLevel: 0,
+          spacing: { before: 240, after: 80 }, keepNext: true, outlineLevel: 0,
           border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: C.rule, space: 2 } },
         },
       },
       {
         id: 'Furniture', name: 'Header Footer Small', basedOn: 'Normal', quickFormat: false,
-        run: { font: FONT, size: SIZE.small - 1, color: C.muted },
+        run: { font: FONT, size: SIZE.small - 1, color: C.faint },
         paragraph: { spacing: { after: 0 } },
       },
       {
         id: 'Heading2', name: 'Heading 2', basedOn: 'Normal', next: 'Normal', quickFormat: true,
-        run: { font: FONT, size: SIZE.h2, bold: true, color: C.ink },
+        run: { font: FONT_SEMIBOLD, size: SIZE.h2, color: C.ink },
         paragraph: { spacing: { before: 120, after: 40 }, keepNext: true, outlineLevel: 1 },
       },
     ],
@@ -247,10 +283,14 @@ const NUMBERING = {
   }],
 };
 
-function headerFooter(headerText, footerText, contentWidth, { blankFirstHeader = false } = {}) {
-  const small = { size: SIZE.small - 1, color: C.muted };
+function headerFooter(headerText, footerText, contentWidth, { blankFirstHeader = false, headerMono = '', footerMono = '' } = {}) {
+  const small = { size: SIZE.small - 1, color: C.faint };
+  const smallMono = { ...small, font: MONO, size: SIZE.small - 2 };
   const header = new Header({
-    children: [new Paragraph({ style: 'Furniture', alignment: AlignmentType.RIGHT, children: [new TextRun({ text: headerText, ...small })] })],
+    children: [new Paragraph({
+      style: 'Furniture', alignment: AlignmentType.RIGHT,
+      children: [new TextRun({ text: headerText, ...small }), ...(headerMono ? [new TextRun({ text: headerMono, ...smallMono })] : [])],
+    })],
   });
   const footer = () => new Footer({
     children: [new Paragraph({
@@ -258,10 +298,11 @@ function headerFooter(headerText, footerText, contentWidth, { blankFirstHeader =
       tabStops: [{ type: TabStopType.RIGHT, position: contentWidth }],
       children: [
         new TextRun({ text: footerText, ...small }),
+        ...(footerMono ? [new TextRun({ text: footerMono, ...smallMono })] : []),
         new TextRun({ ...small, children: [new Tab(), 'Page '] }),
-        new TextRun({ ...small, children: [PageNumber.CURRENT] }),
+        new TextRun({ ...smallMono, children: [PageNumber.CURRENT] }),
         new TextRun({ ...small, text: ' of ' }),
-        new TextRun({ ...small, children: [PageNumber.TOTAL_PAGES] }),
+        new TextRun({ ...smallMono, children: [PageNumber.TOTAL_PAGES] }),
       ],
     })],
   });
@@ -283,27 +324,17 @@ function buildBriefingDocx() {
   const contentWidth = A4.width - margin.left - margin.right;
   const children = [];
 
+  children.push(heroBand({
+    kicker: BRIEFING.kicker,
+    title: BRIEFING.title,
+    subtitle: BRIEFING.subtitle,
+    meta: [{ text: BRIEFING.date, mono: true }, { text: '  ·  Sources accessed ' }, { text: ACCESSED, mono: true }],
+  }, contentWidth));
   children.push(new Paragraph({
-    spacing: { after: 110 },
-    children: [new TextRun({ text: BRIEFING.kicker.toUpperCase(), bold: true, size: SIZE.kicker, color: C.accent, characterSpacing: 20 })],
-  }));
-  children.push(new Paragraph({
-    spacing: { after: 50 },
-    children: [new TextRun({ text: BRIEFING.title, bold: true, size: SIZE.title, color: C.ink })],
-  }));
-  children.push(new Paragraph({
-    spacing: { after: 60 },
-    children: [new TextRun({ text: BRIEFING.subtitle, size: SIZE.subtitle, color: C.muted })],
-  }));
-  children.push(new Paragraph({
-    spacing: { after: 100 },
-    children: [new TextRun({ text: BRIEFING.meta, size: SIZE.small, color: C.muted })],
-  }));
-  children.push(new Paragraph({
-    shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.basisFill },
+    shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.tile },
     border: { left: { style: BorderStyle.SINGLE, size: 12, color: C.rule, space: 8 } },
     indent: { left: 170, right: 113 },
-    spacing: { after: 60 },
+    spacing: { before: 160, after: 60 },
     children: [new TextRun({ text: BRIEFING.howto, size: SIZE.small, italics: true, color: C.muted })],
   }));
 
@@ -321,7 +352,7 @@ function buildBriefingDocx() {
         const w = [1500, contentWidth - 1500];
         children.push(table(w, b.glossary.map(([term, text]) => new TableRow({
           children: [
-            cell([new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: term, bold: true, size: SIZE.small + 1 })] })], w[0], { fill: C.termFill }),
+            cell([new Paragraph({ spacing: { after: 0 }, children: [new TextRun({ text: term, bold: true, size: SIZE.small + 1 })] })], w[0], { fill: C.tile }),
             cell([new Paragraph({ spacing: { after: 0 }, children: runs(text, { size: SIZE.small + 1 }) })], w[1]),
           ],
         }))));
@@ -342,7 +373,7 @@ function buildBriefingDocx() {
     numbering: NUMBERING,
     sections: [{
       properties: { titlePage: true, page: { size: A4, margin } },
-      ...headerFooter(`${BRIEFING.kicker} · ${ACCESSED}`, BRIEFING.footer, contentWidth, { blankFirstHeader: true }),
+      ...headerFooter(`${BRIEFING.kicker} · `, BRIEFING.footer, contentWidth, { blankFirstHeader: true, headerMono: ACCESSED }),
       children,
     }],
   });
@@ -359,7 +390,7 @@ function claimsBySection() {
 function sourceLink(id, size) {
   return new ExternalHyperlink({
     link: SOURCES[id].url,
-    children: [new TextRun({ text: id, size, color: C.cite, underline: {}, bold: true })],
+    children: [mono(id, { size: size - 1, color: C.cite, underline: {}, bold: true })],
   });
 }
 
@@ -368,14 +399,19 @@ function buildSourcesDocx() {
   const margin = { top: 907, bottom: 850, left: 1020, right: 1020, header: 454, footer: 454 };
   const contentWidth = 16838 - margin.left - margin.right;
   const sz = SIZE.small;
-  const P = (children, extra = {}) => new Paragraph({ spacing: { after: 0, line: 240 }, children, ...extra });
-  const T = (text, o = {}) => new TextRun({ text, size: sz, ...o });
+  const P = (children, extra = {}) => new Paragraph({ spacing: { after: 0, line: 240 }, children: children.flat(), ...extra });
+  const T = (text, o = {}) => text.includes('→')
+    ? text.split(/(→)/).filter(Boolean).map((t) => (t === '→' ? mono(t, { size: sz, ...o }) : new TextRun({ text: t, size: sz, ...o })))
+    : new TextRun({ text, size: sz, ...o });
   const children = [];
 
-  children.push(new Paragraph({ spacing: { after: 30 }, children: [new TextRun({ text: 'REDBELLY DAO · NEW CEO BRIEFING', bold: true, size: SIZE.kicker, color: C.accent, characterSpacing: 20 })] }));
-  children.push(new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: 'Source list: every factual claim and its source', bold: true, size: 32 })] }));
+  children.push(heroBand({
+    kicker: BRIEFING.kicker,
+    title: 'Source list: every factual claim and its source',
+    meta: [{ text: `${Object.keys(SOURCES).length}`, mono: true }, { text: ' sources  ·  ' }, { text: `${claimOrder.length}`, mono: true }, { text: ' numbered claims  ·  Sources accessed ' }, { text: ACCESSED, mono: true }],
+  }, contentWidth));
   children.push(new Paragraph({
-    spacing: { after: 80 },
+    spacing: { before: 160, after: 80 },
     children: [new TextRun({
       text: `Covers the briefing and the X thread on Christian Westerlind Wigstrom. All sources accessed ${ACCESSED}. Claim numbers (C01…) follow the order in which claims first appear in the briefing. “Task resource” = listed in the task brief; “Supplementary” = additional public record, used only where the task resources do not cover a fact.`,
       size: sz + 1, color: C.muted,
@@ -388,7 +424,7 @@ function buildSourcesDocx() {
   wA[4] = contentWidth - wA.slice(0, 4).reduce((a, b) => a + b, 0);
   const headRow = (labels, widths) => new TableRow({
     tableHeader: true,
-    children: labels.map((l, i) => cell([P([T(l, { bold: true })])], widths[i], { fill: C.termFill })),
+    children: labels.map((l, i) => cell([P([T(l, { bold: true })])], widths[i], { fill: C.tileStrong })),
   });
   children.push(table(wA, [
     headRow(['ID', 'Source', 'Type', 'Link', 'Access notes'], wA),
@@ -398,7 +434,7 @@ function buildSourcesDocx() {
         cell([P([sourceLink(id, sz)])], wA[0]),
         cell([P([T(s.title, { bold: true })]), P([T(`${s.publisher}${s.date !== 'n/a' ? ` · ${s.date}` : ''}`, { color: C.muted })])], wA[1]),
         cell([P([T(s.tier)])], wA[2]),
-        cell([P([new ExternalHyperlink({ link: s.url, children: [T(s.url, { color: C.cite, underline: {}, size: sz - 1 })] })])], wA[3]),
+        cell([P([new ExternalHyperlink({ link: s.url, children: [mono(s.url, { color: C.cite, underline: {}, size: sz - 3 })] })])], wA[3]),
         cell([P([T(s.note || 'None', { color: C.muted })])], wA[4]),
       ],
     })),
@@ -412,7 +448,7 @@ function buildSourcesDocx() {
   for (const group of claimsBySection()) {
     rowsB.push(new TableRow({
       cantSplit: true,
-      children: [cell([P([T(group.heading, { bold: true, color: C.accent })])], contentWidth, { span: 4, fill: C.basisFill })],
+      children: [cell([P([T(group.heading, { bold: true, color: C.accent })])], contentWidth, { span: 4, fill: C.tile })],
     }));
     for (const key of group.keys) {
       const cl = CLAIMS[key];
@@ -420,7 +456,7 @@ function buildSourcesDocx() {
       rowsB.push(new TableRow({
         cantSplit: true,
         children: [
-          cell([P([T(claimNo(key), { bold: true })])], wB[0]),
+          cell([P([mono(claimNo(key), { size: sz - 1, bold: true })])], wB[0]),
           cell([P([T(cl.text)])], wB[1]),
           cell(ids.map((id) => P([sourceLink(id, sz)])), wB[2]),
           cell(ids.map((id) => P([T(`${id}: `, { bold: true, color: C.muted }), T(`“${cl.ev[id]}”`, { italics: true })])), wB[3]),
@@ -439,9 +475,9 @@ function buildSourcesDocx() {
     ...threadPosts.map((p, i) => new TableRow({
       cantSplit: true,
       children: [
-        cell([P([T(`${i + 1}/${THREAD.length}`, { bold: true })])], wC[0]),
+        cell([P([mono(`${i + 1}/${THREAD.length}`, { size: sz - 1, bold: true })])], wC[0]),
         cell(p.text.split('\n').filter(Boolean).map((line) => P([T(line)])), wC[1]),
-        cell([P([T(p.claims.map(claimNo).join(', '))])], wC[2]),
+        cell([P([mono(p.claims.map(claimNo).join(', '), { size: sz - 1 })])], wC[2]),
         cell(p.sources.map((id) => P([sourceLink(id, sz), T(`  ${SOURCES[id].label}`, { color: C.muted })])), wC[3]),
       ],
     })),
@@ -458,7 +494,7 @@ function buildSourcesDocx() {
     numbering: NUMBERING,
     sections: [{
       properties: { page: { size: page, margin } },
-      ...headerFooter(`Source list · ${BRIEFING.kicker}`, `Sources accessed ${ACCESSED}`, contentWidth),
+      ...headerFooter(`Source list · ${BRIEFING.kicker}`, 'Sources accessed ', contentWidth, { footerMono: ACCESSED }),
       children,
     }],
   });
