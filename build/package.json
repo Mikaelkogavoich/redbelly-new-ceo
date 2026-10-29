@@ -1,0 +1,12 @@
+{
+  "name": "new-ceo-briefing-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generates the TASK-28 briefing, X thread and source list from content.js",
+  "scripts": {
+    "build": "bash build.sh"
+  },
+  "dependencies": {
+    "docx": "9.7.1"
+  }
+}
