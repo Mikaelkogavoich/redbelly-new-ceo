@@ -1,6 +1,6 @@
 # Verification report
 
-Generated 2026-10-29 17:50 UTC by `verification/verify.py`.
+Generated 2026-10-29 17:59 UTC by `verification/verify.py`.
 
 | Check | Result | Details |
 |---|---|---|
@@ -20,7 +20,7 @@ Some publishers refuse requests that do not come from a browser; those rows are 
 | S2 | <https://newshub.medianet.com.au/2026/09/redbellys-new-ceo-is-a-payments-pioneer-betting-on-regulated-tokenisation/171783/> | 200 | reachable |
 | S3 | <https://smbtech.au/news/redbelly-network-taps-monoova-co-founder-as-chief-executive-to-lead-regulated-tokenisation-push/> | 200 | reachable |
 | S4 | <https://www.bankingday.com/redbelly-announces-paytech-co-founder-christian-westerlind-wigstrom-as-ceo-to-push-into-tokenisation> | 200 | reachable |
-| S5 | <https://www.linkedin.com/in/christian-westerlind-wigstrom/> | 429 | refuses automated clients; open in a browser |
+| S5 | <https://www.linkedin.com/in/christian-westerlind-wigstrom/> | 999 | refuses automated clients; open in a browser |
 | S6 | <https://tokeniser.com> | 200 | reachable |
 | S7 | <https://tokeniser.com/why-tokenise> | 200 | reachable |
 | S8 | <https://tokeniser.com/technology> | 200 | reachable |

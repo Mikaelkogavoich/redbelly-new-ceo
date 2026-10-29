@@ -54,7 +54,7 @@ const SOURCES = {
     date: 'n/a',
     url: 'https://www.linkedin.com/in/christian-westerlind-wigstrom/',
     tier: 'Task resource',
-    note: 'Logged-out view (redirects to au.linkedin.com). Used only for the About line, the Education entry and his own posts listing board roles.',
+    note: 'Read logged out (redirects to au.linkedin.com), then confirmed by hand in a logged-in browser on 29 October 2026; screenshots in section E. Used only for the About line, the Education entry and his own posts listing board roles.',
   },
   S6: {
     label: 'Tokeniser',
@@ -196,7 +196,7 @@ const CLAIMS = {
     ev: {
       S1: 'As Co-Founder and CEO of payments platform Monoova, most recently, Christian Westerlind Wigstrom built a leading fintech serving clients with embedded payments.',
       S4: 'his almost 10-year tenure at payment services provider Monoova, where he was co-founder, and CEO until July this year.',
-      S5: 'Co-Founder and CEO of Monoova until May 2026 (About section)',
+      S5: 'Co-Founder and CEO of Monoova until May 2026 (About section; screenshot E1)',
     },
   },
   'push': {
@@ -313,14 +313,14 @@ const CLAIMS = {
   'fta-role': {
     text: 'He has served as Director and Treasurer of FinTech Australia.',
     ev: {
-      S5: 'serve as Director and Treasurer on the Board of FinTech Australia. (his own post)',
+      S5: 'I have had the honour to serve as Director and Treasurer on the Board of FinTech Australia (his own post; screenshot E3)',
     },
   },
   'apn-role': {
     text: 'He has served as an Alternate Director of AusPayNet.',
     ev: {
       S4: 'Westerlind Wigstrom also sits on the board of FinTech Australia and serves as an alternate director at AusPayNet.',
-      S5: 'Alternate Director on the Board of the Australian Payments Network (AusPayNet). (his own post)',
+      S5: 'Alternate Director on the Board of the Australian Payments Network (AusPayNet). (his own post; screenshot E3)',
     },
   },
   'apn-about': {
@@ -338,9 +338,9 @@ const CLAIMS = {
     },
   },
   'oxford-dates': {
-    text: 'His public profile lists Oxford University for 2008 to 2012.',
+    text: 'His public profile dates his Oxford doctorate (D.Phil.) 2008 to 2012.',
     ev: {
-      S5: 'Education: Oxford University, 2008 - 2012',
+      S5: 'Education: University of Oxford, D.Phil. (PhD), International Relations, 2008 - 2012 (screenshot E2)',
     },
   },
   'inet': {
@@ -554,7 +554,7 @@ const BRIEFING = {
         ] },
         { h2: 'Before Monoova' },
         { bullets: [
-          'He holds a PhD from the University of Oxford [[phd:S14,S15,S17]]; his profile lists Oxford University for 2008 to 2012 [[oxford-dates:S5]]. As a doctoral student he worked with Robert Skidelsky “at the intersection of economic policy and theory” and co-edited _The Economic Crisis and the State of Economics_ (Palgrave Macmillan) [[inet:S16]].',
+          'He holds a PhD from the University of Oxford [[phd:S14,S15,S17]]; his profile dates the doctorate 2008 to 2012 [[oxford-dates:S5]]. As a doctoral student he worked with Robert Skidelsky “at the intersection of economic policy and theory” and co-edited _The Economic Crisis and the State of Economics_ (Palgrave Macmillan) [[inet:S16]].',
           'While completing the PhD he worked as an economic advisor and speechwriter in the UK Parliament, in the House of Lords [[parliament:S14,S15]].',
           'He then spent three years as Chief of Staff and Markets at a large agricultural startup in Zimbabwe [[zimbabwe:S14]], described elsewhere as an agriculture and renewable-energy company [[zim-energy:S15]] based in Harare [[zim-harare:S17]]. He has also consulted for firms in Iraq, Sweden, the US and the UK [[consulting:S15]].',
         ] },

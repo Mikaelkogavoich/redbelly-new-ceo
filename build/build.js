@@ -487,6 +487,31 @@ function buildSourcesDocx() {
   children.push(h1('D. Verification notes'));
   for (const note of VERIFICATION_NOTES) children.push(new Paragraph({ numbering: { reference: 'bullet', level: 0 }, spacing: { after: 50 }, children: runs(note, { size: sz + 1 }) }));
 
+  // E. LinkedIn screenshots
+  children.push(new Paragraph({ heading: HeadingLevel.HEADING_1, pageBreakBefore: true, children: [new TextRun('E. LinkedIn screenshots (S5)')] }));
+  children.push(new Paragraph({ spacing: { after: 120 }, children: [T(EVIDENCE_INTRO, { size: sz + 1, color: C.muted })] }));
+  const figure = (e, widthPx) => [
+    new Paragraph({
+      spacing: { after: 40, line: 240, lineRule: LineRuleType.AUTO },
+      children: [new ImageRun({ type: 'png', data: e.data, transformation: { width: widthPx, height: Math.round((widthPx * e.h) / e.w) }, altText: { title: `${e.id} LinkedIn ${e.title}`, description: `Screenshot of the LinkedIn profile, ${e.title}`, name: e.id } })],
+    }),
+    P([mono(e.id, { size: sz - 1, bold: true }), T(`  ${e.title}. Supports `), mono(e.claims.map(claimNo).join(', '), { size: sz - 1 }), T('.')], { spacing: { after: 200, line: 240 } }),
+  ];
+  const wE = [Math.round(contentWidth * 0.58), 0];
+  wE[1] = contentWidth - wE[0];
+  const noBorders = { top: NONE, bottom: NONE, left: NONE, right: NONE };
+  children.push(new Table({
+    width: { size: contentWidth, type: WidthType.DXA },
+    columnWidths: wE,
+    rows: [new TableRow({
+      cantSplit: true,
+      children: [
+        new TableCell({ width: { size: wE[0], type: WidthType.DXA }, borders: noBorders, margins: { right: 240 }, children: [...figure(EVIDENCE[0], 545), ...figure(EVIDENCE[1], 545)] }),
+        new TableCell({ width: { size: wE[1], type: WidthType.DXA }, borders: noBorders, margins: { left: 240 }, children: figure(EVIDENCE[2], 380) }),
+      ],
+    })],
+  }));
+
   return new Document({
     ...DOC_META,
     title: 'Source list: New CEO briefing',
@@ -500,12 +525,24 @@ function buildSourcesDocx() {
   });
 }
 
+// LinkedIn blocks scripts, so its four facts were confirmed by hand; cropped screenshots live in 03-source-list/evidence.
+const EVIDENCE_DIR = path.join(ROOT, '03-source-list', 'evidence');
+const EVIDENCE = [
+  { id: 'E1', file: 's5-linkedin-about.png', title: 'About section', claims: ['cofounder', 'fta-role', 'apn-role'] },
+  { id: 'E2', file: 's5-linkedin-education.png', title: 'Education', claims: ['oxford-dates'] },
+  { id: 'E3', file: 's5-linkedin-post.png', title: 'His post on stepping down as Monoova CEO', claims: ['fta-role', 'apn-role'] },
+].map((e) => {
+  const data = fs.readFileSync(path.join(EVIDENCE_DIR, e.file));
+  return { ...e, data, w: data.readUInt32BE(16), h: data.readUInt32BE(20) };
+});
+const EVIDENCE_INTRO = 'LinkedIn blocks automated checks, so the four facts taken from S5 were confirmed by hand in a logged-in browser on 29 October 2026. Each screenshot is cropped to the relevant part of the page, which removes the browser bars, an advert and unrelated text; the shading marks the supporting passage. The page content is otherwise unchanged.';
+
 const VERIFICATION_NOTES = [
   '**Method.** Each source was opened and read on the access date. Every claim was checked against the excerpt quoted in section B, and every quotation in the briefing and the thread appears verbatim in those excerpts. Quotes attributed to Christian Westerlind Wigstrom come only from S1/S2 (the announcement), S12 (Monoova interview) and S13 (AP+ case study).',
   '**Monoova end date.** S4 says he was CEO “until July this year” (2026); the About line on S5 says “until May 2026”. The briefing therefore states only “until 2026”.',
   '**PhD field.** S15 gives the field as International Relations; S17 describes it as African trade politics. The briefing states only that he holds a PhD from Oxford.',
   '**Paywall and logged-out views.** S4 is partly paywalled; only its free portion is cited. S5 was read logged out; Experience titles are hidden in that view, so the briefing relies on S5 only for the About line, the Education entry and his own posts listing board roles.',
-  '**Automated link checks.** S5 (LinkedIn) refuses scripted requests (HTTP 999) but opens normally in a browser; it was read logged out. The other sources returned HTTP 200 on the access date (see verification/verification-report.md).',
+  '**Automated link checks.** S5 (LinkedIn) refuses scripted requests (HTTP 999) but opens normally in a browser. The four facts taken from it were confirmed by hand in a logged-in browser on 29 October 2026 (screenshots in section E). The other sources returned HTTP 200 on the access date (see verification/verification-report.md).',
   '**Exclusions.** Some sources include personal background outside the professional record (place of birth, pre-career service, relocation, personal style). These were deliberately left out.',
   '**Company-reported figures.** Monoova figures come from Redbelly’s announcement and Tokeniser figures from Tokeniser’s own site; the briefing attributes them accordingly and does not present them as independently audited.',
 ];
@@ -576,7 +613,10 @@ function buildSourcesMd() {
   });
   L.push('', '## D. Verification notes', '');
   VERIFICATION_NOTES.forEach((n) => L.push(`- ${n}`));
-  L.push('');
+  L.push('', '## E. LinkedIn screenshots (S5)', '', EVIDENCE_INTRO, '');
+  for (const e of EVIDENCE) {
+    L.push(`![${e.id}: LinkedIn, ${e.title}](evidence/${e.file})`, '', `**${e.id}** ${e.title}. Supports ${e.claims.map(claimNo).join(', ')}.`, '');
+  }
   return L.join('\n');
 }
 

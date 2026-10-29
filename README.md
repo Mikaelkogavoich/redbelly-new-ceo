@@ -6,13 +6,20 @@ A fully sourced briefing on Redbelly Network’s incoming Chief Executive Office
 |:---:|:---:|:---:|:---:|:---:|
 | 3 of 3 | 18 | 53 | 5 of 5 pass | 29 October 2026 |
 
+<p align="center">
+  <a href="01-briefing/new-ceo-briefing.pdf"><img src="01-briefing/preview/page-1.png" width="32%" alt="Briefing, page 1"></a>
+  <a href="01-briefing/new-ceo-briefing.pdf"><img src="01-briefing/preview/page-2.png" width="32%" alt="Briefing, page 2"></a>
+  <a href="01-briefing/new-ceo-briefing.pdf"><img src="01-briefing/preview/page-3.png" width="32%" alt="Briefing, page 3"></a>
+</p>
+<p align="center"><sub>The three-page briefing. Select a page to open the PDF.</sub></p>
+
 ## Deliverables
 
 | # | Deliverable | Length | Main file | Other formats |
 |---|---|---|---|---|
 | 1 | Briefing | 3 pages, A4 | [`new-ceo-briefing.pdf`](01-briefing/new-ceo-briefing.pdf) | [Word](01-briefing/new-ceo-briefing.docx) · [Markdown](01-briefing/new-ceo-briefing.md) |
 | 2 | X thread | 8 posts, 215 to 276 characters each | [`x-thread.md`](02-x-thread/x-thread.md) | [Plain text for posting](02-x-thread/x-thread.txt) |
-| 3 | Source list | 18 sources, 53 claims with verbatim excerpts | [`source-list.md`](03-source-list/source-list.md) | [PDF](03-source-list/source-list.pdf) · [Word](03-source-list/source-list.docx) |
+| 3 | Source list | 18 sources, 53 claims with verbatim excerpts, LinkedIn screenshots | [`source-list.md`](03-source-list/source-list.md) | [PDF](03-source-list/source-list.pdf) · [Word](03-source-list/source-list.docx) |
 
 The PDF and Word files follow the [Redbelly DAO Task Board brand kit](https://taskboard.redbellydao.network/brand): Be Vietnam Pro for all text, JetBrains Mono for IDs and dates, one red accent, and the DAO logo on a dark steel band. The Word files open directly in Google Docs (File > Open > Upload) if the DAO prefers a shared document.
 
@@ -95,7 +102,7 @@ The script exits with status 1 if any check fails. Link results are reported but
 | Limit | How it is handled |
 |---|---|
 | Banking Day is partly paywalled | Only text from the free, visible portion is cited. |
-| LinkedIn shows a reduced profile when logged out and blocks scripts | Used only for the About line, the Education entry and his own posts listing board roles. Open the link in a browser to confirm. |
+| LinkedIn shows a reduced profile when logged out and blocks scripts | Used only for the About line, the Education entry and his own posts listing board roles. All four facts were confirmed by hand in a logged-in browser on 29 October 2026; cropped screenshots are in section E of the source list. |
 | Sources give different months for the end of his Monoova tenure (July and May) | The briefing states only “until 2026”. |
 | Sources describe his PhD field differently | The briefing states only that he holds a PhD from the University of Oxford. |
 
@@ -105,7 +112,7 @@ Full notes are in section D of the [source list](03-source-list/source-list.md).
 
 Every sentence, source, claim and excerpt lives in one file, [`build/content.js`](build/content.js). The build stops if any citation in the text does not match the sources recorded for that claim.
 
-Requirements: Node.js 18 or later, LibreOffice (`soffice`), Python 3, and the fonts Be Vietnam Pro and JetBrains Mono (both free on Google Fonts). The build stops with a message if either font is missing.
+Requirements: Node.js 18 or later, LibreOffice (`soffice`), Poppler (`pdftoppm`, for the page previews), Python 3 with Pillow, and the fonts Be Vietnam Pro and JetBrains Mono (both free on Google Fonts). The build stops with a message if either font is missing.
 
 ```bash
 cd build && npm install && cd ..
@@ -115,14 +122,14 @@ cd build && npm install && cd ..
 bash build/build.sh
 ```
 
-`build.sh` generates the Word and Markdown files with docx 9.7.1, exports the PDFs with LibreOffice, then runs the offline checks and saves the report. To add the link status table to the saved report, run `python3 verification/verify.py --online --write` afterwards.
+`build.sh` generates the Word and Markdown files with docx 9.7.1, exports the PDFs with LibreOffice, renders the page previews shown above, then runs the offline checks and saves the report. To add the link status table to the saved report, run `python3 verification/verify.py --online --write` afterwards.
 
 ## Repository layout
 
 ```text
-01-briefing/       briefing as PDF, Word and Markdown
+01-briefing/       briefing as PDF, Word and Markdown; preview/ holds the page images
 02-x-thread/       thread as formatted Markdown and plain text for posting
-03-source-list/    claim-by-claim source list as Markdown, PDF and Word
+03-source-list/    claim-by-claim source list as Markdown, PDF and Word; evidence/ holds the LinkedIn screenshots
 verification/      verify.py and the latest report
 build/             content.js (single source), build.js, build.sh, assets/ (DAO logos from the brand kit)
 ```
